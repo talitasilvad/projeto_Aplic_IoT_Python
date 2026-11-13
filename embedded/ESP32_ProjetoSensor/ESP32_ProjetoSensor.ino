@@ -7,7 +7,7 @@ const char* senha = "senha_da_rede";
 const int PIN_TRIG = 21;
 const int PIN_ECHO = 5;
 
-const char* servidor = "http://maquina_:8000";
+const char* servidor = "http://maquina:8000";
 
 void setup() {
   Serial.begin(115200);
@@ -84,5 +84,5 @@ void loop() {
     }
   }
 
-  delay(500);
+  delay(400);
 }

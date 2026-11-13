@@ -1,7 +1,6 @@
 from fastapi import FastAPI
 from fastapi.responses import FileResponse
 from fastapi.staticfiles import StaticFiles
-from gtts import gTTS
 
 app = FastAPI()
 
@@ -35,12 +34,14 @@ def obterUltimaDistancia():
 
 @app.get("/gerar-audio/{valor_distancia}")
 def gerarAudio(valor_distancia: float):
-    situacao = verificarSituacaoDistancia(valor_distancia)
+    if valor_distancia <= 20:
+        arquivo_audio = "audio_muito_proximo"
+    elif valor_distancia <= 50:
+        arquivo_audio = "audio_proximo"
+    else:
+        arquivo_audio = "audio_a_frente"
 
-    voz = gTTS(situacao, lang="pt-BR")
-    caminho_audio = ("api/audio/audio.mp3")
-    voz.save(caminho_audio)
-
+    caminho_audio = f"api/audio/{arquivo_audio}.mp3"    
     return FileResponse(
         caminho_audio,
         media_type="audio/mpeg"

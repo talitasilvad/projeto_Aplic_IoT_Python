@@ -4,6 +4,7 @@ const btnDesligar = document.getElementById("btnDesligar")
 let sistemaAtivo = false
 let ultimaSituacao =  null
 let intervaloConsulta = null
+let audioEmReproducao = false
 
 btnIniciar.addEventListener("click", () =>{
     if(sistemaAtivo){
@@ -15,7 +16,7 @@ btnIniciar.addEventListener("click", () =>{
     btnDesligar.disabled = false
 
     consultarDistancia()
-    intervaloConsulta = setInterval(consultarDistancia, 1000)
+    intervaloConsulta = setInterval(consultarDistancia, 500)
 })
 
 btnDesligar.addEventListener("click", () =>{
@@ -34,18 +35,34 @@ btnDesligar.addEventListener("click", () =>{
 
 
 async function reproduzirAudio(distancia) {
+    if(audioEmReproducao){
+        return
+    }
+
     try {
+        audioEmReproducao = true
         const resposta = await fetch(
             `/gerar-audio/${distancia}`
         )
 
         const audio = await resposta.blob()
         const urlAudio = URL.createObjectURL(audio)
-        const player = new Audio(urlAudio)
-        
-        player.play()
+        const player = new Audio(urlAudio)      
+
+        player.onended = () =>{
+            audioEmReproducao = false
+            URL.revokeObjectURL(urlAudio)
+        }
+
+        player.onerror = () =>{
+            audioEmReproducao = false
+            URL.revokeObjectURL(urlAudio)
+        }
+
+        await player.play()
     } catch (error) {
         console.error("Erro ao reproduzir áudio: ", error)
+        audioEmReproducao = false
     }
         
 }
@@ -72,7 +89,11 @@ async function consultarDistancia() {
         if(situacaoAtual !== ultimaSituacao){
             reproduzirAudio(dados.valor_distancia)
             ultimaSituacao = situacaoAtual
+            console.log("Mudança de situação detectada!")
         }
+        console.log("Distância recebida: ", dados.valor_distancia)
+        console.log("Situação atual: ", situacaoAtual)
+        console.log("Última situação: ", ultimaSituacao)
         
     } catch (error) {
         console.error("Erro ao consultar distância: ", error)

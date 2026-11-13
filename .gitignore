@@ -4,4 +4,4 @@ __pycache__/
 *$py.class
 *.sqlite3
 .vscode/
-audio/*.mp3
+api/audio/*.mp3
