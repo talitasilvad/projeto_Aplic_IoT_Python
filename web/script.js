@@ -75,20 +75,29 @@ async function consultarDistancia() {
         const resposta = await fetch("/ultima-distancia")
         const dados = await resposta.json()
 
+
+        if(dados.valor_distancia === null || dados.valor_distancia === undefined){
+            return
+        }
+
         let situacaoAtual
-        if (dados.valor_distancia <= 20){
-            situacaoAtual = "Obstáculo muito próximo"
+        if (dados.valor_distancia <= 75){
+            situacaoAtual = "Cuidado, obstáculo muito próximo"
         }         
-        else if (dados.valor_distancia <= 50){
+        else if (dados.valor_distancia <= 95){
             situacaoAtual = "Obstáculo próximo"
         }          
         else{
-            situacaoAtual = "Obstáculo a frente"
+            situacaoAtual = "Obstáculo à frente"
         }
 
-        if(situacaoAtual !== ultimaSituacao){
-            reproduzirAudio(dados.valor_distancia)
+        console.log("Situação detectada:", situacaoAtual)
+        console.log("Última situação:", ultimaSituacao)
+        console.log("Áudio em reprodução:", audioEmReproducao)
+
+        if(situacaoAtual !== ultimaSituacao && !audioEmReproducao){
             ultimaSituacao = situacaoAtual
+            reproduzirAudio(dados.valor_distancia)           
             console.log("Mudança de situação detectada!")
         }
         console.log("Distância recebida: ", dados.valor_distancia)

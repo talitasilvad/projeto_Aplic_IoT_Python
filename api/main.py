@@ -7,12 +7,12 @@ app = FastAPI()
 ultima_distancia = None
 
 def verificarSituacaoDistancia(valor_distancia):
-    if valor_distancia <= 20:
-        return "Obstáculo muito próximo"
-    elif valor_distancia <= 50:
-        return "Obstáculo próximo"
+    if valor_distancia <= 75:
+        return "Cuidado, obstáculo muito próximo."
+    elif valor_distancia <= 95:
+        return "Obstáculo próximo."
     else:
-        return "Obstáculo a frente"
+        return "Obstáculo à frente."
 
 @app.get("/distancia/{valor_distancia}")
 def verificarDistancia(valor_distancia: float):
@@ -34,9 +34,9 @@ def obterUltimaDistancia():
 
 @app.get("/gerar-audio/{valor_distancia}")
 def gerarAudio(valor_distancia: float):
-    if valor_distancia <= 20:
+    if valor_distancia <= 75:
         arquivo_audio = "audio_muito_proximo"
-    elif valor_distancia <= 50:
+    elif valor_distancia <= 95:
         arquivo_audio = "audio_proximo"
     else:
         arquivo_audio = "audio_a_frente"
